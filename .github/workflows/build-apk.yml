@@ -20,14 +20,25 @@ jobs:
         run: |
           pip install buildozer cython
           sudo apt-get update
-          sudo apt-get install -y autoconf automake libtool pkg-config cmake openjdk-17-jdk libssl-dev libffi-dev
+          sudo apt-get install -y autoconf automake libtool pkg-config cmake openjdk-17-jdk libssl-dev libffi-dev wget unzip
 
-      - name: Accept Android SDK licenses
+      - name: Setup Android SDK
         run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          mkdir -p ~/.android ~/.buildozer/android/platform
+          cd ~/.buildozer/android/platform
+          
+          # 下载command line tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip -d android-sdk
+          mkdir -p android-sdk/cmdline-tools/latest
+          mv android-sdk/cmdline-tools/* android-sdk/cmdline-tools/latest/ 2>/dev/null || true
+          mv android-sdk/cmdline-tools android-sdk/latest 2>/dev/null || true
+          ls -la android-sdk/
+          
+          # 接受许可
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=~/.buildozer/android/platform/android-sdk --licenses 2>/dev/null || true
+          
+          echo "Android SDK setup done"
 
       - name: Build APK
         run: |
