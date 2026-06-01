@@ -14,37 +14,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install system deps
         run: |
           sudo apt-get update
           sudo apt-get install -y autoconf automake libtool pkg-config cmake openjdk-17-jdk libssl-dev libffi-dev wget unzip
-          pip install buildozer cython
-
-      - name: Pre-install Android SDK & NDK
-        run: |
-          export BUILD_DIR=/home/runner/.buildozer/android/platform
-          mkdir -p $BUILD_DIR
-          cd $BUILD_DIR
-          
-          # 下载并安装cmdline-tools到buildozer期望的位置
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q commandlinetools-linux-11076708_latest.zip
-          # Buildozer期望的路径：android-sdk/tools/bin/sdkmanager
-          mkdir -p android-sdk
-          mv cmdline-tools android-sdk/tools
-          echo "✅ SDK结构:"
-          ls -la android-sdk/tools/bin/
-          
-          # 接受所有license
-          yes | $BUILD_DIR/android-sdk/tools/bin/sdkmanager --sdk_root=$BUILD_DIR/android-sdk --licenses 2>&1 | tail -5
-          
-          echo "✅ SDK pre-installed!"
+          pip install --user buildozer cython
 
       - name: Build APK
         run: |
-          yes | buildozer android debug
+          export PATH=$HOME/.local/bin:$PATH
+          cd $GITHUB_WORKSPACE
+          yes | buildozer android debug 2>&1
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
