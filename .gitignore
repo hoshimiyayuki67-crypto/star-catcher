@@ -1,0 +1,15 @@
+# Build artifacts
+.buildozer/
+bin/
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
