@@ -8,28 +8,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/kivy/python-for-android:latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install system deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y autoconf automake libtool pkg-config cmake openjdk-17-jdk libssl-dev libffi-dev wget unzip gettext
-          # 确保libtool宏完整
-          sudo apt-get install -y --reinstall libtool libtool-bin autoconf automake m4
-          pip install --user buildozer cython setuptools
-
       - name: Build APK
         run: |
-          export PATH=$HOME/.local/bin:$PATH
-          # 设置libtool宏路径
-          export ACLOCAL_PATH="/usr/share/aclocal:$ACLOCAL_PATH"
-          cd $GITHUB_WORKSPACE
+          pip install buildozer cython
           yes | buildozer android debug 2>&1
 
       - name: Upload APK
