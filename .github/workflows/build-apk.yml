@@ -8,14 +8,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/kivy/python-for-android:latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool pkg-config cmake openjdk-17-jdk libssl-dev libffi-dev wget unzip gettext ccache
+          pip install --user buildozer cython setuptools
+
+      - name: Fix libtool macros
+        run: |
+          # libtool 2.4.7+ 手动安装LT_SYS_SYMBOL_USCORE宏
+          echo "AC_DEFUN([LT_SYS_SYMBOL_USCORE], [m4_define([LT_SYS_SYMBOL_USCORE], [.])])" | sudo tee -a /usr/share/aclocal/libtool.m4
+
       - name: Build APK
         run: |
-          pip install buildozer cython
+          export PATH=$HOME/.local/bin:$PATH
+          export ACLOCAL_PATH="/usr/share/aclocal"
+          cd $GITHUB_WORKSPACE
           yes | buildozer android debug 2>&1
 
       - name: Upload APK
