@@ -24,11 +24,10 @@ jobs:
 
       - name: Build APK
         run: |
-          cd star_catcher_app
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: star-catcher-apk
-          path: star_catcher_app/bin/*.apk
+          path: bin/*.apk
