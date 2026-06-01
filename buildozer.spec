@@ -50,7 +50,7 @@ android.build_mode = debug
 android.archs = arm64-v8a
 
 # 是否使用默认gradle
-android.gradle_dependencies = []
+# android.gradle_dependencies = []
 
 [buildozer]
 
