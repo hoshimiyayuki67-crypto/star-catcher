@@ -14,7 +14,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 
 # 版本
-version = 1.1.0
+version = 2.0.0
 
 # 需求
 requirements = python3,kivy
